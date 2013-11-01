@@ -16,7 +16,7 @@ describe CASClient::Frameworks::Rails::Filter do
     context "faking user without attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com') }
       it 'should set the session user' do
-        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.before(mock_controller_with_session(nil, subject))
         subject.should eq({:cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com'})
       end
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
@@ -25,7 +25,7 @@ describe CASClient::Frameworks::Rails::Filter do
     context "faking user with attributes" do
       before { CASClient::Frameworks::Rails::Filter.fake('tester@test.com', {:test => 'stuff', :this => 'that'}) }
       it 'should set the session user and attributes' do
-        CASClient::Frameworks::Rails::Filter.filter(mock_controller_with_session(nil, subject))
+        CASClient::Frameworks::Rails::Filter.before(mock_controller_with_session(nil, subject))
         subject.should eq({ :cas_user => 'tester@test.com', :casfilteruser => 'tester@test.com', :cas_extra_attributes => {:test => 'stuff', :this => 'that' }})
       end
       after { CASClient::Frameworks::Rails::Filter.fake(nil,nil) }
@@ -51,7 +51,7 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_return(pgt)
 
       controller = mock_controller_with_session()
-      CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+      CASClient::Frameworks::Rails::Filter.before(controller).should eq(true)
      end
   end
 
@@ -67,7 +67,7 @@ describe CASClient::Frameworks::Rails::Filter do
       CASClient::Frameworks::Rails::Filter.stub(:unauthorized!) {"bogusresponse"}
 
       controller = mock_controller_with_session()
-      CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
+      CASClient::Frameworks::Rails::Filter.before(controller).should eq(false)
      end
   end
 
@@ -79,7 +79,7 @@ describe CASClient::Frameworks::Rails::Filter do
 
         controller = mock_controller_with_session()
         controller.stub(:params) {{}}
-        CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
+        CASClient::Frameworks::Rails::Filter.before(controller).should eq(false)
        end
     end
 
@@ -93,7 +93,7 @@ describe CASClient::Frameworks::Rails::Filter do
           controller = mock_controller_with_session()
           controller.session[:cas_sent_to_gateway] = true
           controller.stub(:params) {{}}
-          CASClient::Frameworks::Rails::Filter.filter(controller).should eq(false)
+          CASClient::Frameworks::Rails::Filter.before(controller).should eq(false)
          end
       end
 
@@ -104,7 +104,7 @@ describe CASClient::Frameworks::Rails::Filter do
           controller = mock_controller_with_session()
           controller.session[:cas_sent_to_gateway] = true
           controller.stub(:params) {{}}
-          CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+          CASClient::Frameworks::Rails::Filter.before(controller).should eq(true)
          end
       end
     end
@@ -126,7 +126,7 @@ describe CASClient::Frameworks::Rails::Filter do
         CASClient::Client.any_instance.stub(:retrieve_proxy_granting_ticket).and_raise CASClient::CASException
 
         controller = mock_controller_with_session()
-        expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(CASClient::CASException)
+        expect { CASClient::Frameworks::Rails::Filter.before(controller) }.to raise_error(CASClient::CASException)
        end
     end
 
@@ -136,7 +136,7 @@ describe CASClient::Frameworks::Rails::Filter do
         CASClient::Client.any_instance.stub(:request_cas_response).and_raise "Some exception"
 
         controller = mock_controller_with_session()
-        expect { CASClient::Frameworks::Rails::Filter.filter(controller) }.to raise_error(RuntimeError)
+        expect { CASClient::Frameworks::Rails::Filter.before(controller) }.to raise_error(RuntimeError)
        end
     end
 
@@ -152,7 +152,7 @@ describe CASClient::Frameworks::Rails::Filter do
         subject[:cas_last_valid_ticket] = 'bogusticket'
         subject[:cas_last_valid_ticket_service] = 'bogusurl'
         controller = mock_controller_with_session(mock_post_request(), subject)
-        CASClient::Frameworks::Rails::Filter.filter(controller).should eq(true)
+        CASClient::Frameworks::Rails::Filter.before(controller).should eq(true)
       end
     end
   end
