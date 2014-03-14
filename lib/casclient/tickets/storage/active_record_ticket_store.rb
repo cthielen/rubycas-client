@@ -37,7 +37,8 @@ module CASClient
           if config[:pgtious_table_name]
             CasPgtiou.set_table_name = config[:pgtious_table_name]
           end
-          ActiveRecord::SessionStore.session_class = ServiceTicketAwareSession
+          #ActiveRecord::SessionStore.session_class = ServiceTicketAwareSession
+          ActionDispatch::Session::ActiveRecordStore.session_class = ServiceTicketAwareSession
         end
 
         def store_service_session_lookup(st, controller)
@@ -90,8 +91,8 @@ module CASClient
         before_save :save_service_ticket
 
         def save_service_ticket
-          if data[:service_ticket]
-            self.service_ticket = data[:service_ticket]
+          if data["service_ticket"]
+            self.service_ticket = data["service_ticket"]
           end
         end
       end
