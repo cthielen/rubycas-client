@@ -1,3 +1,13 @@
+= In Need of New Maintainer
+
+Unfortunately, those of us who have been maintaining this project no longer have time to give it the attention it needs. If you are interested in taking over maintainence of it, please let us know!
+
+Otherwise, we recommend you consider one of the following alternatives:
+
+{rack-cas}[https://github.com/biola/rack-cas]
+
+{omniauth-cas}[https://github.com/dlindahl/omniauth-cas]
+
 {<img src="https://secure.travis-ci.org/rubycas/rubycas-client.png" alt="Build Status" />}[http://travis-ci.org/rubycas/rubycas-client]
 {<img src="https://codeclimate.com/badge.png" />}[https://codeclimate.com/github/rubycas/rubycas-client]
 
@@ -121,7 +131,7 @@ Here is a more complicated configuration showing most of the configuration optio
     :username_session_key => :cas_user,
     :extra_attributes_session_key => :cas_extra_attributes,
     :logger => cas_logger,
-    :enable_single_sign_out => true
+    :enable_single_sign_out => true,
     :service_url => "https://mysite.service.com"
   )
 
